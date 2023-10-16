@@ -120,3 +120,56 @@ class CustomOHETransformer(BaseEstimator, TransformerMixin):
     #self.fit(X,y)
     result = self.transform(X)
     return result
+
+class CustomSigma3Transformer(BaseEstimator, TransformerMixin):
+  def __init__(self, target_column):
+    self.target_column = target_column
+    self.lowb = None
+    self.upb = None
+  def fit(self, df):
+    assert isinstance(df, pd.core.frame.DataFrame), f'expected Dataframe but got {type(df)} instead.'
+    assert self.target_column in df.columns, f'unknown column {self.target_column}'
+    assert all([isinstance(v, (int, float)) for v in df[self.target_column].to_list()])
+
+    mean = (df[self.target_column]).mean()
+    sigma = (df[self.target_column]).std()
+
+    self.lowb = mean - (3 * sigma)
+    self.upb = mean + (3 * sigma)
+    return self
+  def transform(self, df):
+    assert self.lowb and self.upb, f'This {self.__class__.__name__} instance is not fitted yet. Call "fit" with appropriate arguments before using this estimator.'
+    df_ = df.copy()
+    df_[self.target_column] = df_[self.target_column].clip(lower=self.lowb, upper=self.upb)
+    df_.reset_index()
+    return df_
+  def fit_transform(self, df):
+    self.fit(df)
+    result = self.transform(df)
+    return result
+    
+class CustomTukeyTransformer(BaseEstimator, TransformerMixin):
+  def __init__(self, target_column, fence='outer'):
+    assert fence in ['inner', 'outer']
+    self.target_column = target_column
+    self.fence = 1.5 if fence == 'inner' else 3
+    self.lowb = None
+    self.upb = None
+  def fit(self, df):
+    q1 = df[self.target_column].quantile(0.25)
+    q3 = df[self.target_column].quantile(0.75)
+    iqr = q3-q1
+    self.lowb = q1-self.fence*iqr
+    self.upb = q3+self.fence*iqr
+
+    return
+  def transform(self, df):
+    assert self.lowb and self.upb, f'This {self.__class__.__name__} instance is not fitted yet. Call "fit" with appropriate arguments before using this estimator.'
+    df_ = df.copy()
+    df_[self.target_column] = df_[self.target_column].clip(lower=self.lowb, upper=self.upb)
+    df_.reset_index()
+    return df_
+  def fit_transform(self, df, y=None):
+    self.fit(df)
+    result = self.transform(df)
+    return result
