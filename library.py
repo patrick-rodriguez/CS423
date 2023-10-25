@@ -112,7 +112,7 @@ class CustomOHETransformer(BaseEstimator, TransformerMixin):
     self.drop_first = drop_first
 
   #fill in the rest below
-  def fit(self, X, y = None):
+  def fit(self, X, y = None):print
     print(f"Warning: {self.__class__.__name__}.fit does nothing.")
     return self
 
@@ -201,7 +201,6 @@ class CustomRobustTransformer(BaseEstimator, TransformerMixin):
     return df_
   def fit_transform(self, df, y = None):
     self.fit(df)
-    print(self.iqr, self.median)
     result = self.transform(df)
     return result
 
