@@ -112,7 +112,7 @@ class CustomOHETransformer(BaseEstimator, TransformerMixin):
     self.drop_first = drop_first
 
   #fill in the rest below
-  def fit(self, X, y = None):print
+  def fit(self, X, y = None):
     print(f"Warning: {self.__class__.__name__}.fit does nothing.")
     return self
 
