@@ -113,6 +113,7 @@ class CustomOHETransformer(BaseEstimator, TransformerMixin):
 
   #fill in the rest below
   def fit(self, X, y = None):
+    ''''''
     print(f"Warning: {self.__class__.__name__}.fit does nothing.")
     return self
 
