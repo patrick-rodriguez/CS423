@@ -304,3 +304,18 @@ def threshold_results(thresh_list, actuals, predicted):
   return (result_df, fancy_df)
 def customer_setup(customer_table, transformer=customer_transformer, rs=customer_variance_based_split, ts=.2):
   return dataset_setup(customer_table, 'Rating', transformer, rs=rs, ts=ts)
+  
+def halving_search(model, grid, x_train, y_train, factor=2, min_resources="exhaust", scoring='roc_auc'):
+  #your code below
+    halving_cv = HalvingGridSearchCV(
+    model, grid,  #our model and the parameter combos we want to try
+    scoring=scoring,  #from chapter 10
+    n_jobs=-1,  #use all available cpus
+    min_resources=min_resources,  #"exhaust" sets this to 20, which is non-optimal. Possible bug in algorithm.
+    factor=factor,  #double samples and take top half of combos on each iteration
+    cv=5, random_state=1234,
+    refit=True,  #remembers the best combo and gives us back that model already trained and ready for testing
+)
+
+    grid_result = halving_cv.fit(x_train, y_train)
+    return grid_result
