@@ -7,7 +7,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.impute import KNNImputer
 from sklearn.metrics import f1_score
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, HalvingGridSearchCV
 from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score
 
 
